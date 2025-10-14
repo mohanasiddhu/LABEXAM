@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./hospital-backend-main
+      dockerfile: Dockerfile
+    image: hospital-backend:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - JAVA_OPTS=-Xms256m -Xmx512m
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./hospital-frontend-main
+      dockerfile: Dockerfile
+    image: hospital-frontend:latest
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - backend
+    restart: unless-stopped
