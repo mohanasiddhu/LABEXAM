@@ -1,0 +1,37 @@
+name: Build and Push Docker images
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./hospital-backend-main
+          file: ./hospital-backend-main/Dockerfile
+          push: true
+          tags: |
+            mohanamani/endsem_backend:latest
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v4
+        with:
+          context: ./hospital-frontend-main
+          file: ./hospital-frontend-main/Dockerfile
+          push: true
+          tags: |
+            mohanamani/endsem_frontend:latest

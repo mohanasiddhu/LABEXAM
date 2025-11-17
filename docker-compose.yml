@@ -5,18 +5,23 @@ services:
     build:
       context: ./hospital-backend-main
       dockerfile: Dockerfile
-    image: hospital-backend:latest
+    image: mohanamani/endsem_backend:latest
     ports:
       - "8081:8081"
     environment:
       - JAVA_OPTS=-Xms256m -Xmx512m
+      - SPRING_DATASOURCE_URL=jdbc:mysql://db:3306/hos
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=admin
+    depends_on:
+      - db
     restart: unless-stopped
 
   frontend:
     build:
       context: ./hospital-frontend-main
       dockerfile: Dockerfile
-    image: hospital-frontend:latest
+    image: mohanamani/endsem_frontend:latest
     ports:
       - "5173:5173"
     environment:
@@ -24,3 +29,20 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: hospital-db
+    environment:
+      - MYSQL_DATABASE=hos
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: unless-stopped
+
+volumes:
+  db_data:
